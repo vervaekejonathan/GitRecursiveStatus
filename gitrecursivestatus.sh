@@ -15,9 +15,16 @@ function GitStatus()
 		echo  		$output	
 		echo -ne 	"\e[0m"	
 	else
-		echo -ne 	"\e[1;31m\t"
-		echo  		"Your branch/origin is not up-to-date!"
-		echo -ne 	"\e[0m"
+		if [[ "$output" != "" ]]
+		then
+			echo -ne 	"\e[1;34m\t"
+			echo  		$output	
+			echo -ne 	"\e[0m"	
+		else
+			echo -ne 	"\e[1;31m\t"
+			echo  		"Your branch/origin is not up-to-date!"
+			echo -ne 	"\e[0m"
+		fi
 
 	fi
 
