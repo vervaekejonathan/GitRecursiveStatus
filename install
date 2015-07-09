@@ -1,0 +1,3 @@
+#!/bin/bash
+sudo cp gitrst /usr/bin/
+sudo cp gitwrst /usr/bin

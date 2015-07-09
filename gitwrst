@@ -1,0 +1,2 @@
+#!/bin/bash
+watch -c -n 10 gitrst $1 
