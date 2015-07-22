@@ -1,5 +1,19 @@
 #!/bin/bash
 
+showlog=0
+
+function ShowHelp()
+{
+
+echo  "Usage: ${0##*/} [-hl] [PATH] 
+Show git status of PATH or (when no PATH) the current directory.
+
+	-h	display this help and exit
+	-l	display log instead of status
+"
+
+
+}
 
 #PRINT GIT STATUS
 function GitStatus()
@@ -52,7 +66,18 @@ function GitStatus()
 	done
 	echo -ne "\e[0m"
 	echo ""
+}
 
+function GitLog()
+{
+	#output=$(git log | head -n 6 | tail -n 4)
+	echo $(pwd)
+	echo -ne "\e[2;33m\t"
+	echo -e "    $(git log | head -n 3 | tail -n 1)"
+	echo -ne "\e[0m"
+	echo -ne "\e[2;39m\t"
+	echo -e "$(git log | head -n 6 | tail -n 2)"
+	echo -ne "\e[0m"	
 }
 
 
@@ -67,18 +92,49 @@ function loopFolders()
 		then
 			cd $i	
 			cd ..
-			GitStatus						
+			if [ $showlog == 1 ]; then
+				GitLog
+			else
+				GitStatus						
+			fi
 			cd $rootPath
 		fi
 	done
 }
 
+
+# HANDLE ARGUMENTS
+OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
+while getopts "hl" opt; do
+	case "$opt" in
+        	h)
+             		ShowHelp
+             		exit 0
+             		;;
+         	l)  	
+			showlog=1
+             		;;
+   		'?')
+		        ShowHelp >&2
+             		exit 1
+             		;;
+	esac
+done
+shift "$((OPTIND-1))" # Shift off the options and optional --.
+
+
 currentPath=$(pwd)
-if [ "$#" -eq 1 ]
-then
-	cd $1
+
+#check if last argument is a folder
+path="${BASH_ARGV[0]}"
+
+if [[ -d $path ]]; then
+	cd $path
 fi
 
+#do the magic
 loopFolders ./
 
 cd $currentPath
+
+
